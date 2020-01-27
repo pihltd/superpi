@@ -3,23 +3,23 @@ workflow helloHaplotypeCaller {
 }
 
 task haplotypeCaller {
-  File GATK
+  String GATK
   File RefFasta
   String sampleName
   File inputBAM
   File RefIndex
   File RefDict
   File bamIndex
+  String resDir
 
   command{
-    java -jar ${GATK} \
-      -T HaplotypeCaller \
+    ${GATK} HaplotypeCaller \
       -R ${RefFasta} \
       -I ${inputBAM} \
-      -o ${sampleName}.raw.indels.snps.vcf
+      -O ${resDir}${sampleName}.raw.indels.snps.vcf
   }
 
   output {
-    File rawVCF = "${sampleName}.raw.indels.snps.vcf"
+    File rawVCF = "${resDir}${sampleName}.raw.indels.snps.vcf"
   }
 }
