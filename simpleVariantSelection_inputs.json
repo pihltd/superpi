@@ -1,0 +1,10 @@
+{
+  "SimpleVariantSelection.refIndex": "File",
+  "SimpleVariantSelection.name": "String",
+  "SimpleVariantSelection.refDict": "File",
+  "SimpleVariantSelection.haplotypeCaller.bamIndex": "File",
+  "SimpleVariantSelection.refFasta": "File",
+  "SimpleVariantSelection.gatk": "File",
+  "SimpleVariantSelection.haplotypeCaller.inputBAM": "File"
+}
+
