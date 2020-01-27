@@ -1,9 +1,10 @@
 workflow SimpleVariantSelection {
-  File gatk
+  String gatk
   File refFasta
   File refIndex
   File refDict
   String name
+  String resDir
 
   call haplotypeCaller {
     input:
@@ -11,7 +12,8 @@ workflow SimpleVariantSelection {
       RefFasta = refFasta,
       GATK = gatk,
       RefIndex = refIndex,
-      RefDict = refDict
+      RefDict = refDict,
+      ResDir = resDir
   }
   call select as selectSNPs {
     input:
@@ -21,7 +23,8 @@ workflow SimpleVariantSelection {
       RefIndex = refIndex,
       RefDict = refDict,
       type="SNP",
-      rawVCF=haplotypeCaller.rawVCF
+      rawVCF=haplotypeCaller.rawVCF,
+      ResDir = resDir
     }
   call select as selectIndels {
     input:
@@ -31,7 +34,8 @@ workflow SimpleVariantSelection {
       RefIndex = refIndex,
       RefDict = refDict,
       type="INDEL",
-      rawVCF=haplotypeCaller.rawVCF
+      rawVCF=haplotypeCaller.rawVCF,
+      ResDir = resDir
     }
     call hardFilterSNP {
       input:
@@ -40,7 +44,8 @@ workflow SimpleVariantSelection {
         sampleName = name,
         RefIndex = refIndex,
         RefDict = refDict,
-        rawSNPs = selectSNPs.rawSubset
+        rawSNPs = selectSNPs.rawSubset,
+        ResDir = resDir
     }
     call hardFilterIndel {
       input:
@@ -49,7 +54,8 @@ workflow SimpleVariantSelection {
         sampleName = name,
         RefIndex = refIndex,
         RefDict = refDict,
-        rawIndels = selectIndels.rawSubset
+        rawIndels = selectIndels.rawSubset,
+        ResDir = resDir
     }
     call combine {
       input:
@@ -59,115 +65,115 @@ workflow SimpleVariantSelection {
         RefIndex = refIndex,
         RefDict = refDict,
         filteredSNPs = hardFilterSNP.filteredSNPs,
-        filteredIndels = hardFilterIndel.filteredIndels
+        filteredIndels = hardFilterIndel.filteredIndels,
+        ResDir = resDir
     }
 }
 
 task haplotypeCaller {
-  File GATK
+  String GATK
   File RefFasta
   File RefIndex
   File RefDict
   String sampleName
   File inputBAM
   File bamIndex
+  String ResDir
   command {
-    java -jar ${GATK} \
-        -T HaplotypeCaller \
+    ${GATK} HaplotypeCaller \
         -R ${RefFasta} \
         -I ${inputBAM} \
-        -o ${sampleName}.raw.indels.snps.vcf
+        -O ${ResDir}${sampleName}.raw.indels.snps.vcf
   }
   output {
-    File rawVCF = "${sampleName}.raw.indels.snps.vcf"
+    File rawVCF = "${ResDir}${sampleName}.raw.indels.snps.vcf"
   }
 }
 
 task select {
-  File GATK
+  String GATK
   File RefFasta
   File RefDict
   File RefIndex
   String sampleName
   String type
   String rawVCF
+  String ResDir
 
   command {
-    java -jar ${GATK} \
-    -T SelectVariants \
+    ${GATK} SelectVariants \
     -R ${RefFasta} \
     -V ${rawVCF} \
-    -selectType ${type}
-    -o ${sampleName}_raw.${type}.vcf
+    --select-type-to-include ${type} \
+    -O ${ResDir}${sampleName}_raw.${type}.vcf
   }
   output {
-    File rawSubset = "${sampleName}_raw.${type}.vcf"
+    File rawSubset = "${ResDir}${sampleName}_raw.${type}.vcf"
   }
 }
 
 task hardFilterSNP {
-  File GATK
+  String GATK
   File RefFasta
   File RefIndex
   File RefDict
   String sampleName
   File rawSNPs
+  String ResDir
 
   command {
-    java -jar ${GATK} \
-      -T VariantFiltration \
+    ${GATK} VariantFiltration \
       -R ${RefFasta} \
       -V ${rawSNPs} \
-      --filterExpression "FS > 60.0" \
-      --filterName "snp_filter" \
-      -o ${sampleName}.filtered.snps.vcf
+      --filter-expression "FS > 60.0" \
+      --filter-name "snp_filter" \
+      -O ${ResDir}${sampleName}.filtered.snps.vcf
   }
   output {
-    File filteredSNPs = "${sampleName}.filtered.snps.vcf"
+    File filteredSNPs = "${ResDir}${sampleName}.filtered.snps.vcf"
   }
 }
 
 task hardFilterIndel {
-  File GATK
+  String GATK
   File RefFasta
   File RefIndex
   File RefDict
   String sampleName
   File rawIndels
+  String ResDir
 
   command {
-    java -jar ${GATK} \
-      -T VariantFiltration \
+    ${GATK} VariantFiltration \
       -R ${RefFasta} \
       -V ${rawIndels} \
-      --filterExpression "FS > 200.0" \
-      --filterName "indel_filter" \
-      -o ${sampleName}.filtered.indels.vcf
+      --filter-expression "FS > 200.0" \
+      --filter-name "indel_filter" \
+      -O ${ResDir}${sampleName}.filtered.indels.vcf
   }
   output {
-    File filteredIndels = "${sampleName}.filtered.indels.vcf"
+    File filteredIndels = "${ResDir}${sampleName}.filtered.indels.vcf"
   }
 }
 
 task combine {
-  File GATK
+  String GATK
   File RefFasta
   File RefIndex
   File RefDict
   String sampleName
   File filteredSNPs
   File filteredIndels
+  String ResDir
 
   command {
-    java -jar ${GATK} \
-      -T CombineVariants \
+    ${GATK} CombineGVCFs \
       -R ${RefFasta} \
       -V ${filteredSNPs} \
       -V ${filteredIndels} \
-      --genotypemergeroption UNSORTED \
-      -o ${sampleName}.filtered.snps.indels.vcf
+      -O ${ResDir}${sampleName}.filtered.snps.indels.vcf
   }
   output {
-    File filteredVCF = "${sampleName}.filtered.snps.indels.vcf"
+    File filteredVCF = "${ResDir}${sampleName}.filtered.snps.indels.vcf"
   }
 }
