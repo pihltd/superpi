@@ -1,0 +1,10 @@
+{
+  "helloHaplotypeCaller.haplotypeCaller.RefFasta": "File",
+  "helloHaplotypeCaller.haplotypeCaller.bamIndex": "File",
+  "helloHaplotypeCaller.haplotypeCaller.GATK": "File",
+  "helloHaplotypeCaller.haplotypeCaller.RefIndex": "File",
+  "helloHaplotypeCaller.haplotypeCaller.RefDict": "File",
+  "helloHaplotypeCaller.haplotypeCaller.inputBAM": "File",
+  "helloHaplotypeCaller.haplotypeCaller.sampleName": "String"
+}
+
