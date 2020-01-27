@@ -167,10 +167,10 @@ task combine {
   String ResDir
 
   command {
-    ${GATK} CombineGVCFs \
+    ${GATK} MergeVcfs \
       -R ${RefFasta} \
-      -V ${filteredSNPs} \
-      -V ${filteredIndels} \
+      -I ${filteredSNPs} \
+      -I ${filteredIndels} \
       -O ${ResDir}${sampleName}.filtered.snps.indels.vcf
   }
   output {
