@@ -1,10 +1,10 @@
 {
-  "SimpleVariantSelection.refIndex": "File",
-  "SimpleVariantSelection.name": "String",
-  "SimpleVariantSelection.refDict": "File",
-  "SimpleVariantSelection.haplotypeCaller.bamIndex": "File",
-  "SimpleVariantSelection.refFasta": "File",
-  "SimpleVariantSelection.gatk": "File",
-  "SimpleVariantSelection.haplotypeCaller.inputBAM": "File"
+  "SimpleVariantSelection.refIndex": "/home/pihl/data/helloHaplotypeCaller/ref/human_g1k_b37_20.fasta.fai",
+  "SimpleVariantSelection.name": "NA12878",
+  "SimpleVariantSelection.refDict": "/home/pihl/data/helloHaplotypeCaller/ref/human_g1k_b37_20.dict",
+  "SimpleVariantSelection.haplotypeCaller.bamIndex": "/home/pihl/data/NA12878_wgs_20.bai",
+  "SimpleVariantSelection.refFasta": "/home/pihl/data/helloHaplotypeCaller/ref/human_g1k_b37_20.fasta",
+  "SimpleVariantSelection.gatk": "/home/pihl/gatk/gatk-4.1.4.1/gatk",
+  "SimpleVariantSelection.haplotypeCaller.inputBAM": "/home/pihl/data/NA12878_wgs_20.bam",
+  "SimpleVariantSelection.resDir": "/home/pihl/results/"
 }
-

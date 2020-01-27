@@ -1,9 +1,10 @@
 workflow SimpleVariantSelection {
-  File gatk
+  String gatk
   File refFasta
   File refIndex
   File refDict
   String name
+  String resDir
 
   call haplotypeCaller {
     input:
@@ -11,7 +12,8 @@ workflow SimpleVariantSelection {
       RefFasta = refFasta,
       GATK = gatk,
       RefIndex = refIndex,
-      RefDict = refDict
+      RefDict = refDict,
+      ResDir = resDir
   }
   call select as selectSNPs {
     input:
@@ -21,7 +23,8 @@ workflow SimpleVariantSelection {
       RefIndex = refIndex,
       RefDict = refDict,
       type="SNP",
-      rawVCF=haplotypeCaller.rawVCF
+      rawVCF=haplotypeCaller.rawVCF,
+      ResDir = resDir
     }
   call select as selectIndels {
     input:
@@ -31,48 +34,49 @@ workflow SimpleVariantSelection {
       RefIndex = refIndex,
       RefDict = refDict,
       type="INDEL",
-      rawVCF=haplotypeCaller.rawVCF
+      rawVCF=haplotypeCaller.rawVCF,
+      ResDir = resDir
     }
 }
 
 task haplotypeCaller {
-  File GATK
+  String GATK
   File RefFasta
   File RefIndex
   File RefDict
   String sampleName
   File inputBAM
   File bamIndex
+  String ResDir
   command {
-    java -jar ${GATK} \
-        -T HaplotypeCaller \
+    ${GATK} HaplotypeCaller \
         -R ${RefFasta} \
         -I ${inputBAM} \
-        -o ${sampleName}.raw.indels.snps.vcf
+        -O ${ResDir}${sampleName}.raw.indels.snps.vcf
   }
   output {
-    File rawVCF = "${sampleName}.raw.indels.snps.vcf"
+    File rawVCF = "${ResDir}${sampleName}.raw.indels.snps.vcf"
   }
 }
 
 task select {
-  File GATK
+  String GATK
   File RefFasta
   File RefDict
   File RefIndex
   String sampleName
   String type
   String rawVCF
+  String ResDir
 
   command {
-    java -jar ${GATK} \
-    -T SelectVariants \
+    ${GATK} SelectVariants \
     -R ${RefFasta} \
     -V ${rawVCF} \
-    -selectType ${type}
-    -o ${sampleName}_raw.${type}.vcf
+    --select-type-to-include ${type} \
+    -O ${ResDir}${sampleName}_raw.${type}.vcf
   }
   output {
-    File rawSubset = "${sampleName}_raw.${type}.vcf"
+    File rawSubset = "${ResDir}${sampleName}_raw.${type}.vcf"
   }
 }
