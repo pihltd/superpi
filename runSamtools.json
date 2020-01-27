@@ -1,5 +1,5 @@
 {
-  "analysis.runSamViewHeader.container" : "samtools-arm",
+  "analysis.runSamViewHeader.container" : "superpi1:5000/samtools-arm",
   "analysis.runSamViewHeader.datamount" : "/mnt/usb1/data/1000genomes/HG02508/alignment:/data/",
   "analysis.runSamViewHeader.resultsmount" : "/mnt/usb1/data/cromwellresults:/results/",
   "analysis.runSamViewHeader.bamfile" : "/data/HG02508.mapped.ILLUMINA.bwa.ACB.low_coverage.20130415.bam",

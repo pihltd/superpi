@@ -38,7 +38,7 @@ RUN apt-get -y install \
   libcurl4-openssl-dev \
   libssl-dev \
   libfuse-dev \
-  fuse
+  default-jdk
 
 #htslib build
 WORKDIR /
