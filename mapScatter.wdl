@@ -3,6 +3,7 @@ workflow mapScatter {
   String Sample
   String Picard
   String Picardtool
+  String Resdir
 
   scatter (pair in Fastqs){
     String fastq1 = pair.left
@@ -14,7 +15,8 @@ workflow mapScatter {
         Fastq2 = fastq2,
         samplename = Sample,
         picard = Picard,
-        picardtool = Picardtool
+        picardtool = Picardtool,
+        resdir = Resdir
     }
   }
 }
@@ -26,15 +28,16 @@ task bamIt {
   String samplename
   String picard
   String picardtool
+  String resdir
 
   command {
     java -jar ${picard} ${picardtool} \
       FASTQ=${Fastq1} \
       FASTQ2=${Fastq2} \
-      OUTPUT=${samplename}.unmapped.bam
+      OUTPUT=${resdir}${samplename}.unmapped.bam
   }
 
   output {
-    File bamfile = "${samplename}.unmapped.bam"
+    File bamfile = "${resdir}${samplename}.unmapped.bam"
   }
 }
