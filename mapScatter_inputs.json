@@ -1,0 +1,7 @@
+{
+  "mapScatter.Picardtool": "String",
+  "mapScatter.Sample": "String",
+  "mapScatter.Fastqs": "Map[String, String]",
+  "mapScatter.Picard": "String"
+}
+
